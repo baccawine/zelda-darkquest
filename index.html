@@ -34,7 +34,7 @@
   const ctx = canvas.getContext('2d');
 
   const sprite = new Image();
-  sprite.src = 'https://i.imgur.com/j2XQk6y.png';
+  sprite.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJAAAABACAYAAACj9MMFAAAACXBIWXMAAAsTAAALEwEAmpwYAAAEXUlEQVR4nO3aP08jQRSG4V+NJGVLDoRXT0xHQR3U+PrCRVjVA9B0EU5W1vGUaSzOEr6zngnz4eMZMZZZYZrN2fpUra1VVSra7TY6nEy5rxPQvpm+1vZcFfHAQIAgIAgICAvFGWAP1pMDp7/XW3y3BLqBe03j72fwD+4PLzO9ZV+xW62cV52r9knL+yMtGVXH+qN5oPW+heSfQOEvF6n03xzLz2VXzXdyXG/vTRidq93PJbLLw5HzXazvaLwNXx1Xny81/LR1XnWvxQu9dnPTa5dC95sKrkNpp/HbzG5dcvLu3eY5tDzaRy3Zn+FYu6zz+Wv7R5i9J/v85oWfHz3UO3VXzqWcv4VvdPZxJ67HGPbE1wvV64q9zJ2Ry+WL+K9ypWvrPkm07Fy8+RzKuzPqMUb4H6A7EbLvK9/kPvXjXp6JfFkt8vzhfTxzNnEyfplrnO1b6u8x7uTfzPb+w5lPA25/PuPKf9wdrUryH4Ir/8/L9X2pZZnf+g/cAe5eP6v+q8ZsxkS+uY7IXb7XqjJXyLM+jWXBfjReYxZvxPY9qNl3YQz52vhnPrfCsD5tzGUcavpT4Z0J2lzZT+/6xoDd3eEO2tA6bbx/u4fCPW/T8l3MXQw8R7Mt6f10bz7MbUPHWf7HE5svmH2Lz2XDOdZTzVXDZ5LTUtnXk9Ry3p4XszY06Vq8u+2dGHDXjPoD5JKr9bWn10zX0nKtu+sZWmXivPS2iVxXxydfVq/3Om2loTzoHq59kDR2q9Bqu7kDUY+f9WrbJlv1l7yv97ThVLlfws/+DH7x+dy63Z39RMAgCAICD4A+0Sjy/3FrQcAAAAASUVORK5CYII=';
 
   const player = {
     x: 240,
@@ -47,7 +47,7 @@
     frameTick: 0,
     frameTickMax: 10,
     moving: false,
-    direction: 'down', // 'up', 'down', 'left', 'right'
+    direction: 'down',
     attacking: false,
     attackTime: 0,
   };
@@ -85,7 +85,6 @@
       player.moving = true;
     }
 
-    // Clamp position to canvas
     player.x = Math.max(0, Math.min(canvas.width - player.width, player.x));
     player.y = Math.max(0, Math.min(canvas.height - player.height, player.y));
 
@@ -99,7 +98,6 @@
       if (player.attackTime <= 0) player.attacking = false;
     }
 
-    // Animation frame update
     if (player.moving) {
       player.frameTick++;
       if (player.frameTick >= player.frameTickMax) {
@@ -107,21 +105,16 @@
         player.frameIndex = (player.frameIndex + 1) % player.frameCount;
       }
     } else {
-      player.frameIndex = 0; // idle frame
+      player.frameIndex = 0;
     }
   }
 
   function drawPlayer() {
     if (!sprite.complete) {
-      // image pas chargée => carré violet
       ctx.fillStyle = '#f0f';
       ctx.fillRect(player.x, player.y, player.width, player.height);
       return;
     }
-
-    // Chaque ligne dans la spritesheet correspond à une direction:
-    // 0 = down, 1 = left, 2 = right, 3 = up
-    // Ici on a juste 4 frames par direction, sprite de 32x32 pixels
 
     let directionRow = 0;
     switch(player.direction) {
