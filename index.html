@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Zelda-style Demo</title>
+<title>Zelda-style Demo avec Sprite</title>
 <style>
   body {
     margin: 0;
@@ -33,11 +33,15 @@
   const canvas = document.getElementById('gameCanvas');
   const ctx = canvas.getContext('2d');
 
+  // Chargement du sprite simple (un petit personnage)
+  const playerImg = new Image();
+  playerImg.src = 'https://i.imgur.com/OdL0XPt.png'; // exemple sprite pixel art simple
+
   const player = {
     x: 240,
     y: 160,
-    size: 32,
-    color: '#f0f',
+    width: 32,
+    height: 32,
     speed: 3,
     attacking: false,
     attackTime: 0,
@@ -53,20 +57,17 @@
   });
 
   function update() {
-    // Movement
     if (keys['ArrowUp']) player.y -= player.speed;
     if (keys['ArrowDown']) player.y += player.speed;
     if (keys['ArrowLeft']) player.x -= player.speed;
     if (keys['ArrowRight']) player.x += player.speed;
 
-    // Keep player inside canvas
-    player.x = Math.max(0, Math.min(canvas.width - player.size, player.x));
-    player.y = Math.max(0, Math.min(canvas.height - player.size, player.y));
+    player.x = Math.max(0, Math.min(canvas.width - player.width, player.x));
+    player.y = Math.max(0, Math.min(canvas.height - player.height, player.y));
 
-    // Attack logic
     if (keys[' '] && !player.attacking) {
       player.attacking = true;
-      player.attackTime = 20; // frames of attack
+      player.attackTime = 20;
     }
     if (player.attacking) {
       player.attackTime--;
@@ -75,22 +76,24 @@
   }
 
   function drawPlayer() {
-    ctx.fillStyle = player.color;
-    ctx.fillRect(player.x, player.y, player.size, player.size);
-
-    if (player.attacking) {
-      ctx.strokeStyle = '#ff0';
-      ctx.lineWidth = 4;
-      ctx.strokeRect(player.x - 4, player.y - 4, player.size + 8, player.size + 8);
+    if (playerImg.complete) {
+      ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
+      if (player.attacking) {
+        ctx.strokeStyle = '#ff0';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(player.x - 4, player.y - 4, player.width + 8, player.height + 8);
+      }
+    } else {
+      // Si l’image n’est pas encore chargée, afficher un carré
+      ctx.fillStyle = '#f0f';
+      ctx.fillRect(player.x, player.y, player.width, player.height);
     }
   }
 
   function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
     update();
     drawPlayer();
-
     requestAnimationFrame(gameLoop);
   }
 
