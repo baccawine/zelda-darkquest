@@ -36,28 +36,28 @@
   });
 
   function drawChurchInterior() {
-    // Sol pierre gris clair
+    
     ctx.fillStyle = "#6e6b6b";
     ctx.fillRect(0, 280, canvas.width, 40);
 
-    // Mur sombre
+    
     ctx.fillStyle = "#3a3333";
     ctx.fillRect(0, 0, canvas.width, 280);
 
-    // Colonnes
+    
     ctx.fillStyle = "#5c5656";
     for(let x = 40; x <= 440; x += 100) {
       ctx.fillRect(x, 80, 20, 200);
     }
 
-    // Vitraux (rectangles colorés entre colonnes)
+    
     const colors = ["#9b59b6", "#e74c3c", "#f1c40f", "#2980b9", "#27ae60"];
     for(let i = 0; i < 4; i++) {
       const x = 60 + i * 100;
       ctx.fillStyle = colors[i];
       ctx.fillRect(x, 20, 60, 60);
 
-      // Décorations vitraux : cercles
+      
       ctx.fillStyle = "#ecf0f1";
       ctx.beginPath();
       ctx.arc(x + 15, 50, 10, 0, Math.PI * 2);
@@ -67,14 +67,14 @@
       ctx.fill();
     }
 
-    // Tapis central
+   
     ctx.fillStyle = "#c0392b";
     ctx.fillRect(200, 280, 80, 40);
     ctx.strokeStyle = "#7f1911";
     ctx.lineWidth = 4;
     ctx.strokeRect(200, 280, 80, 40);
 
-    // Chandeliers stylisés (ovales jaunes)
+    
     ctx.fillStyle = "#f39c12";
     for(let x = 70; x <= 410; x += 140) {
       ctx.beginPath();
@@ -88,19 +88,19 @@
 
     drawChurchInterior();
 
-    // Déplacement
+    
     if(keys["ArrowUp"]) player.y -= player.speed;
     if(keys["ArrowDown"]) player.y += player.speed;
     if(keys["ArrowLeft"]) player.x -= player.speed;
     if(keys["ArrowRight"]) player.x += player.speed;
 
-    // Limites du canvas
+    
     if(player.x < 0) player.x = 0;
     if(player.y < 0) player.y = 0;
     if(player.x > canvas.width - player.width) player.x = canvas.width - player.width;
     if(player.y > canvas.height - player.height) player.y = canvas.height - player.height;
 
-    // Dessiner le sprite
+    
     ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
 
     requestAnimationFrame(gameLoop);
