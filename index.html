@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Zelda-style Demo avec Sprite</title>
+<title>Démo Zelda-style - Animation marche</title>
 <style>
   body {
     margin: 0;
@@ -26,16 +26,15 @@
 </head>
 <body>
   <canvas id="gameCanvas" width="480" height="320"></canvas>
-  <div id="info">Utilisez les flèches pour déplacer, barre espace pour attaquer.</div>
+  <div id="info">Flèches pour déplacer, espace pour attaquer</div>
 
 <script>
 (() => {
   const canvas = document.getElementById('gameCanvas');
   const ctx = canvas.getContext('2d');
 
-  // Chargement du sprite simple (un petit personnage)
-  const playerImg = new Image();
-  playerImg.src = 'https://i.imgur.com/OdL0XPt.png'; // exemple sprite pixel art simple
+  const sprite = new Image();
+  sprite.src = 'https://i.imgur.com/j2XQk6y.png';
 
   const player = {
     x: 240,
@@ -43,6 +42,12 @@
     width: 32,
     height: 32,
     speed: 3,
+    frameIndex: 0,
+    frameCount: 4,
+    frameTick: 0,
+    frameTickMax: 10,
+    moving: false,
+    direction: 'down', // 'up', 'down', 'left', 'right'
     attacking: false,
     attackTime: 0,
   };
@@ -57,11 +62,30 @@
   });
 
   function update() {
-    if (keys['ArrowUp']) player.y -= player.speed;
-    if (keys['ArrowDown']) player.y += player.speed;
-    if (keys['ArrowLeft']) player.x -= player.speed;
-    if (keys['ArrowRight']) player.x += player.speed;
+    player.moving = false;
 
+    if (keys['ArrowUp']) {
+      player.y -= player.speed;
+      player.direction = 'up';
+      player.moving = true;
+    }
+    if (keys['ArrowDown']) {
+      player.y += player.speed;
+      player.direction = 'down';
+      player.moving = true;
+    }
+    if (keys['ArrowLeft']) {
+      player.x -= player.speed;
+      player.direction = 'left';
+      player.moving = true;
+    }
+    if (keys['ArrowRight']) {
+      player.x += player.speed;
+      player.direction = 'right';
+      player.moving = true;
+    }
+
+    // Clamp position to canvas
     player.x = Math.max(0, Math.min(canvas.width - player.width, player.x));
     player.y = Math.max(0, Math.min(canvas.height - player.height, player.y));
 
@@ -69,24 +93,60 @@
       player.attacking = true;
       player.attackTime = 20;
     }
+
     if (player.attacking) {
       player.attackTime--;
       if (player.attackTime <= 0) player.attacking = false;
     }
+
+    // Animation frame update
+    if (player.moving) {
+      player.frameTick++;
+      if (player.frameTick >= player.frameTickMax) {
+        player.frameTick = 0;
+        player.frameIndex = (player.frameIndex + 1) % player.frameCount;
+      }
+    } else {
+      player.frameIndex = 0; // idle frame
+    }
   }
 
   function drawPlayer() {
-    if (playerImg.complete) {
-      ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
-      if (player.attacking) {
-        ctx.strokeStyle = '#ff0';
-        ctx.lineWidth = 4;
-        ctx.strokeRect(player.x - 4, player.y - 4, player.width + 8, player.height + 8);
-      }
-    } else {
-      // Si l’image n’est pas encore chargée, afficher un carré
+    if (!sprite.complete) {
+      // image pas chargée => carré violet
       ctx.fillStyle = '#f0f';
       ctx.fillRect(player.x, player.y, player.width, player.height);
+      return;
+    }
+
+    // Chaque ligne dans la spritesheet correspond à une direction:
+    // 0 = down, 1 = left, 2 = right, 3 = up
+    // Ici on a juste 4 frames par direction, sprite de 32x32 pixels
+
+    let directionRow = 0;
+    switch(player.direction) {
+      case 'down': directionRow = 0; break;
+      case 'left': directionRow = 1; break;
+      case 'right': directionRow = 2; break;
+      case 'up': directionRow = 3; break;
+    }
+
+    ctx.drawImage(
+      sprite,
+      player.frameIndex * player.width,
+      directionRow * player.height,
+      player.width,
+      player.height,
+      player.x,
+      player.y,
+      player.width,
+      player.height
+    );
+
+    if (player.attacking) {
+      ctx.strokeStyle = '#ff0';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(player.x - 4, player.y - 4, player.width + 8, player.height + 8);
     }
   }
 
