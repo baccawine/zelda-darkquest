@@ -2,10 +2,106 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8" />
-<title>Test image intégrée</title>
+<title>Démo Pixel Art Twilight Princess</title>
+<style>
+  body { margin:0; background: #222; overflow: hidden; }
+  #gameCanvas { background: #4caf50; display: block; margin: auto; image-rendering: pixelated; }
+</style>
 </head>
 <body>
-  <h3>Test image en base64 intégrée</h3>
-  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJAAAABACAYAAACj9MMFAAAACXBIWXMAAAsTAAALEwEAmpwYAAAEXUlEQVR4nO3aP08jQRSG4V+NJGVLDoRXT0xHQR3U+PrCRVjVA9B0EU5W1vGUaSzOEr6zngnz4eMZMZZZYZrN2fpUra1VVSra7TY6nEy5rxPQvpm+1vZcFfHAQIAgIAgICAvFGWAP1pMDp7/XW3y3BLqBe03j72fwD+4PLzO9ZV+xW62cV52r9knL+yMtGVXH+qN5oPW+heSfQOEvF6n03xzLz2VXzXdyXG/vTRidq93PJbLLw5HzXazvaLwNXx1Xny81/LR1XnWvxQu9dnPTa5dC95sKrkNpp/HbzG5dcvLu3eY5tDzaRy3Zn+FYu6zz+Wv7R5i9J/v85oWfHz3UO3VXzqWcv4VvdPZxJ67HGPbE1wvV64q9zJ2Ry+WL+K9ypWvrPkm07Fy8+RzKuzPqMUb4H6A7EbLvK9/kPvXjXp6JfFkt8vzhfTxzNnEyfplrnO1b6u8x7uTfzPb+w5lPA25/PuPKf9wdrUryH4Ir/8/L9X2pZZnf+g/cAe5eP6v+q8ZsxkS+uY7IXb7XqjJXyLM+jWXBfjReYxZvxPY9qNl3YQz52vhnPrfCsD5tzGUcavpT4Z0J2lzZT+/6xoDd3eEO2tA6bbx/u4fCPW/T8l3MXQw8R7Mt6f10bz7MbUPHWf7HE5svmH2Lz2XDOdZTzVXDZ5LTUtnXk9Ry3p4XszY06Vq8u+2dGHDXjPoD5JKr9bWn10zX0nKtu+sZWmXivPS2iVxXxydfVq/3Om2loTzoHq59kDR2q9Bqu7kDUY+f9WrbJlv1l7yv97ThVLlfws/+DH7x+dy63Z39RMAgCAICD4A+0Sjy/3FrQcAAAAASUVORK5CYII=" alt="Test sprite" />
+<canvas id="gameCanvas" width="480" height="320"></canvas>
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+// Sprite sheets 2 frames (32x32) style TP (simplifié)
+const spriteData = [
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAvklEQVRIie3SMQrCMBRA0ckEFtJHyaEmUYXY3iHhQXSkJ9wP5bRUOG+R4WJOQOx0nDdu4znYc3m7EAHzRmJD4x2+RqNcBxG7YT+7il22g1KzFr+SBsFaR9J0JS/NNqBXPlbd4e+6URvA5HkhikqOPl3NBDbIfaX0KiIqWlSrwRqlivU1KrVkJqF9C0a0dWjTXqkA4/lL2U6+jpaOUzIr8Q3rX7g2ou5nZra6CPozHZvEOU50mC7y+C3JmWJb0QdvAAAAAElFTkSuQmCC",
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAvUlEQVRIie3SQQrCMBRA0ckEFtJHyaEmUYXY3iHhQXSkJ9wP5bRUOG+R4WJOQOx0nDdu4znYc3m7EAHzRmJD4x2+RqNcBxG7YT+7il22g1KzFr+SBsFaR9J0JS/NNqBXPlbd4e+6URvA5HkhikqOPl3NBDbIfaX0KiIqWlSrwRqlivU1KrVkJqF9C0a0dWjTXqkA4/lL2U6+jpaOUzIr8Q3rX7g2ou5nZra6CPozHZvEOU50mC7y+C3JmWJb0QdvAAAAAElFTkSuQmCC"
+];
+
+const player = {
+  x: 50,
+  y: 260,
+  width: 32,
+  height: 32,
+  frame: 0,
+  frameCount: 2,
+  frameTimer: 0,
+  frameInterval: 10,
+  vx: 0,
+  vy: 0,
+  onGround: false,
+  sprite: new Image(),
+};
+
+player.sprite.src = spriteData[0];
+
+const gravity = 0.8;
+const jumpPower = -15;
+
+const keys = {};
+
+window.addEventListener('keydown', e => {
+  keys[e.key] = true;
+});
+
+window.addEventListener('keyup', e => {
+  keys[e.key] = false;
+});
+
+function update() {
+  player.vx = 0;
+  if (keys['ArrowLeft']) {
+    player.vx = -3;
+  }
+  if (keys['ArrowRight']) {
+    player.vx = 3;
+  }
+  if (keys[' '] && player.onGround) {
+    player.vy = jumpPower;
+    player.onGround = false;
+  }
+
+  player.x += player.vx;
+  player.vy += gravity;
+  player.y += player.vy;
+
+  if (player.y + player.height > canvas.height) {
+    player.y = canvas.height - player.height;
+    player.vy = 0;
+    player.onGround = true;
+  }
+
+  if (player.x < 0) player.x = 0;
+  if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+
+  // Animation frame update
+  if (player.vx !== 0) {
+    player.frameTimer++;
+    if (player.frameTimer > player.frameInterval) {
+      player.frame = (player.frame + 1) % player.frameCount;
+      player.sprite.src = spriteData[player.frame];
+      player.frameTimer = 0;
+    }
+  } else {
+    player.frame = 0;
+    player.sprite.src = spriteData[0];
+  }
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(player.sprite, player.x, player.y, player.width, player.height);
+}
+
+function loop() {
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+
+loop();
+</script>
 </body>
 </html>
