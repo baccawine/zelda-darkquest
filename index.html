@@ -1,50 +1,57 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8" />
-<title>Démo carré simple</title>
-<style>
-  body { margin:0; background: #222; overflow: hidden; }
-  #gameCanvas { background: #4caf50; display: block; margin: auto; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zelda Demo</title>
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    canvas {
+      border: 2px solid white;
+    }
+  </style>
 </head>
 <body>
-<canvas id="gameCanvas" width="480" height="320"></canvas>
-<script>
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+  <canvas id="game" width="512" height="384"></canvas>
 
-canvas.width = 512;
-canvas.height = 384;
+  <script>
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
 
-let playerX = 50;
-let playerY = 50;
-const speed = 2;
+    let playerX = 50;
+    let playerY = 50;
+    const speed = 2;
 
-// Charger l'image du sprite
-const playerImg = new Image();
-playerImg.src = "link_sprite_32x32.png"; // le nom de ton image
+    // Charger le sprite
+    const playerImg = new Image();
+    playerImg.src = "link_sprite_32x32.png"; // Assure-toi que l'image est bien là
 
-document.addEventListener("keydown", function (e) {
-    if (e.code === "ArrowRight") playerX += speed;
-    if (e.code === "ArrowLeft") playerX -= speed;
-    if (e.code === "ArrowUp") playerY -= speed;
-    if (e.code === "ArrowDown") playerY += speed;
-});
+    document.addEventListener("keydown", function (e) {
+      if (e.code === "ArrowRight") playerX += speed;
+      if (e.code === "ArrowLeft") playerX -= speed;
+      if (e.code === "ArrowUp") playerY -= speed;
+      if (e.code === "ArrowDown") playerY += speed;
+    });
 
-function gameLoop() {
-    ctx.fillStyle = "green"; // fond vert
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    function gameLoop() {
+      ctx.fillStyle = "green";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.drawImage(playerImg, playerX, playerY); // afficher le sprite
+      ctx.drawImage(playerImg, playerX, playerY);
 
-    requestAnimationFrame(gameLoop);
-}
+      requestAnimationFrame(gameLoop);
+    }
 
-playerImg.onload = () => {
-    gameLoop();
-};
-</script>
-
+    playerImg.onload = () => {
+      gameLoop();
+    };
+  </script>
 </body>
 </html>
