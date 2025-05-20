@@ -2,10 +2,10 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8" />
-<title>Zelda DarkQuest - Église</title>
+<title>Église sans perso</title>
 <style>
-  body { margin: 0; overflow: hidden; background: #2f2a2a; }
-  canvas { display: block; margin: auto; background: #1e1a1a; }
+  body { margin: 0; background: #1e1a1a; }
+  canvas { display: block; margin: auto; }
 </style>
 </head>
 <body>
@@ -14,50 +14,24 @@
   const canvas = document.getElementById("game");
   const ctx = canvas.getContext("2d");
 
-  const playerImg = new Image();
-  playerImg.src = "link_sprite_32x32.png";
-
-  const player = {
-    x: 220,
-    y: 220,
-    speed: 3,
-    width: 32,
-    height: 32,
-  };
-
-  const keys = {};
-
-  window.addEventListener("keydown", e => {
-    keys[e.key] = true;
-  });
-
-  window.addEventListener("keyup", e => {
-    keys[e.key] = false;
-  });
-
   function drawChurchInterior() {
-    
     ctx.fillStyle = "#6e6b6b";
     ctx.fillRect(0, 280, canvas.width, 40);
 
-    
     ctx.fillStyle = "#3a3333";
     ctx.fillRect(0, 0, canvas.width, 280);
 
-    
     ctx.fillStyle = "#5c5656";
     for(let x = 40; x <= 440; x += 100) {
       ctx.fillRect(x, 80, 20, 200);
     }
 
-    
-    const colors = ["#9b59b6", "#e74c3c", "#f1c40f", "#2980b9", "#27ae60"];
+    const colors = ["#9b59b6", "#e74c3c", "#f1c40f", "#2980b9"];
     for(let i = 0; i < 4; i++) {
       const x = 60 + i * 100;
       ctx.fillStyle = colors[i];
       ctx.fillRect(x, 20, 60, 60);
 
-      
       ctx.fillStyle = "#ecf0f1";
       ctx.beginPath();
       ctx.arc(x + 15, 50, 10, 0, Math.PI * 2);
@@ -67,14 +41,12 @@
       ctx.fill();
     }
 
-   
     ctx.fillStyle = "#c0392b";
     ctx.fillRect(200, 280, 80, 40);
     ctx.strokeStyle = "#7f1911";
     ctx.lineWidth = 4;
     ctx.strokeRect(200, 280, 80, 40);
 
-    
     ctx.fillStyle = "#f39c12";
     for(let x = 70; x <= 410; x += 140) {
       ctx.beginPath();
@@ -85,30 +57,11 @@
 
   function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
     drawChurchInterior();
-
-    
-    if(keys["ArrowUp"]) player.y -= player.speed;
-    if(keys["ArrowDown"]) player.y += player.speed;
-    if(keys["ArrowLeft"]) player.x -= player.speed;
-    if(keys["ArrowRight"]) player.x += player.speed;
-
-    
-    if(player.x < 0) player.x = 0;
-    if(player.y < 0) player.y = 0;
-    if(player.x > canvas.width - player.width) player.x = canvas.width - player.width;
-    if(player.y > canvas.height - player.height) player.y = canvas.height - player.height;
-
-    
-    ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
-
     requestAnimationFrame(gameLoop);
   }
 
-  playerImg.onload = () => {
-    gameLoop();
-  };
+  gameLoop();
 </script>
 </body>
 </html>
