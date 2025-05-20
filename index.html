@@ -11,72 +11,40 @@
 <body>
 <canvas id="gameCanvas" width="480" height="320"></canvas>
 <script>
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
 
-const player = {
-  x: 50,
-  y: 260,
-  width: 32,
-  height: 32,
-  vx: 0,
-  vy: 0,
-  onGround: false,
+canvas.width = 512;
+canvas.height = 384;
+
+let playerX = 50;
+let playerY = 50;
+const speed = 2;
+
+// Charger l'image du sprite
+const playerImg = new Image();
+playerImg.src = "link_sprite_32x32.png"; // le nom de ton image
+
+document.addEventListener("keydown", function (e) {
+    if (e.code === "ArrowRight") playerX += speed;
+    if (e.code === "ArrowLeft") playerX -= speed;
+    if (e.code === "ArrowUp") playerY -= speed;
+    if (e.code === "ArrowDown") playerY += speed;
+});
+
+function gameLoop() {
+    ctx.fillStyle = "green"; // fond vert
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.drawImage(playerImg, playerX, playerY); // afficher le sprite
+
+    requestAnimationFrame(gameLoop);
+}
+
+playerImg.onload = () => {
+    gameLoop();
 };
-
-const gravity = 0.8;
-const jumpPower = -15;
-
-const keys = {};
-
-window.addEventListener('keydown', e => {
-  keys[e.key] = true;
-});
-
-window.addEventListener('keyup', e => {
-  keys[e.key] = false;
-});
-
-function update() {
-  player.vx = 0;
-  if (keys['ArrowLeft']) {
-    player.vx = -3;
-  }
-  if (keys['ArrowRight']) {
-    player.vx = 3;
-  }
-  if (keys[' '] && player.onGround) {
-    player.vy = jumpPower;
-    player.onGround = false;
-  }
-
-  player.x += player.vx;
-  player.vy += gravity;
-  player.y += player.vy;
-
-  if (player.y + player.height > canvas.height) {
-    player.y = canvas.height - player.height;
-    player.vy = 0;
-    player.onGround = true;
-  }
-
-  if (player.x < 0) player.x = 0;
-  if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
-}
-
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = 'purple';
-  ctx.fillRect(player.x, player.y, player.width, player.height);
-}
-
-function loop() {
-  update();
-  draw();
-  requestAnimationFrame(loop);
-}
-
-loop();
 </script>
+
 </body>
 </html>
