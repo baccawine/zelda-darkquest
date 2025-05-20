@@ -2,10 +2,10 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8" />
-<title>Église sans perso</title>
+<title>Église avec Link</title>
 <style>
   body { margin: 0; background: #1e1a1a; }
-  canvas { display: block; margin: auto; }
+  canvas { display: block; margin: auto; background: #1e1a1a; }
 </style>
 </head>
 <body>
@@ -13,6 +13,23 @@
 <script>
   const canvas = document.getElementById("game");
   const ctx = canvas.getContext("2d");
+
+  const playerImg = new Image();
+  playerImg.src = "link_sprite_32x32.png";
+
+  let playerX = 220;
+  let playerY = 240;
+  const playerSpeed = 3;
+
+  const keys = {};
+
+  window.addEventListener("keydown", e => {
+    keys[e.key] = true;
+  });
+
+  window.addEventListener("keyup", e => {
+    keys[e.key] = false;
+  });
 
   function drawChurchInterior() {
     ctx.fillStyle = "#6e6b6b";
@@ -55,13 +72,30 @@
     }
   }
 
+  function updatePlayerPosition() {
+    if (keys["ArrowLeft"]) playerX -= playerSpeed;
+    if (keys["ArrowRight"]) playerX += playerSpeed;
+    if (keys["ArrowUp"]) playerY -= playerSpeed;
+    if (keys["ArrowDown"]) playerY += playerSpeed;
+
+    // Limiter le déplacement dans la zone du canvas
+    if (playerX < 0) playerX = 0;
+    if (playerX > canvas.width - 32) playerX = canvas.width - 32;
+    if (playerY < 0) playerY = 0;
+    if (playerY > canvas.height - 32) playerY = canvas.height - 32;
+  }
+
   function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawChurchInterior();
+    updatePlayerPosition();
+    ctx.drawImage(playerImg, playerX, playerY);
     requestAnimationFrame(gameLoop);
   }
 
-  gameLoop();
+  playerImg.onload = () => {
+    gameLoop();
+  };
 </script>
 </body>
 </html>
