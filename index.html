@@ -2,10 +2,10 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8" />
-<title>Démo Pixel Art Twilight Princess</title>
+<title>Demo carré simple</title>
 <style>
   body { margin:0; background: #222; overflow: hidden; }
-  #gameCanvas { background: #4caf50; display: block; margin: auto; image-rendering: pixelated; }
+  #gameCanvas { background: #4caf50; display: block; margin: auto; }
 </style>
 </head>
 <body>
@@ -14,28 +14,15 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-// Sprite sheets 2 frames (32x32) style TP (simplifié)
-const spriteData = [
-  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAvklEQVRIie3SMQrCMBRA0ckEFtJHyaEmUYXY3iHhQXSkJ9wP5bRUOG+R4WJOQOx0nDdu4znYc3m7EAHzRmJD4x2+RqNcBxG7YT+7il22g1KzFr+SBsFaR9J0JS/NNqBXPlbd4e+6URvA5HkhikqOPl3NBDbIfaX0KiIqWlSrwRqlivU1KrVkJqF9C0a0dWjTXqkA4/lL2U6+jpaOUzIr8Q3rX7g2ou5nZra6CPozHZvEOU50mC7y+C3JmWJb0QdvAAAAAElFTkSuQmCC",
-  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAvUlEQVRIie3SQQrCMBRA0ckEFtJHyaEmUYXY3iHhQXSkJ9wP5bRUOG+R4WJOQOx0nDdu4znYc3m7EAHzRmJD4x2+RqNcBxG7YT+7il22g1KzFr+SBsFaR9J0JS/NNqBXPlbd4e+6URvA5HkhikqOPl3NBDbIfaX0KiIqWlSrwRqlivU1KrVkJqF9C0a0dWjTXqkA4/lL2U6+jpaOUzIr8Q3rX7g2ou5nZra6CPozHZvEOU50mC7y+C3JmWJb0QdvAAAAAElFTkSuQmCC"
-];
-
 const player = {
   x: 50,
   y: 260,
   width: 32,
   height: 32,
-  frame: 0,
-  frameCount: 2,
-  frameTimer: 0,
-  frameInterval: 10,
   vx: 0,
   vy: 0,
   onGround: false,
-  sprite: new Image(),
 };
-
-player.sprite.src = spriteData[0];
 
 const gravity = 0.8;
 const jumpPower = -15;
@@ -75,24 +62,12 @@ function update() {
 
   if (player.x < 0) player.x = 0;
   if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
-
-  // Animation frame update
-  if (player.vx !== 0) {
-    player.frameTimer++;
-    if (player.frameTimer > player.frameInterval) {
-      player.frame = (player.frame + 1) % player.frameCount;
-      player.sprite.src = spriteData[player.frame];
-      player.frameTimer = 0;
-    }
-  } else {
-    player.frame = 0;
-    player.sprite.src = spriteData[0];
-  }
 }
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(player.sprite, player.x, player.y, player.width, player.height);
+  ctx.fillStyle = 'purple';
+  ctx.fillRect(player.x, player.y, player.width, player.height);
 }
 
 function loop() {
